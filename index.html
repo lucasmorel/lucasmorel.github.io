@@ -23,15 +23,57 @@
 	<div class="container">
 		<div class="manga">
 			<div class="hard1"></div>
-			<!-- Next button 
-			<div ignore="1" class="next-button"></div>-->
-			<!-- Previous button 
-			<div ignore="1" class="previous-button"></div>-->
+			<!-- Next button -->
+			<div ignore="1" class="next-button"></div>
+			<!-- Previous button -->
+			<div ignore="1" class="previous-button"></div>
 			<div class="hard2"></div>
 			
 		</div>
 	</div>
 </div>
+
+
+<!-- <div class="thumbnails"> -->
+	<!-- <div> -->
+		<!-- <ul> -->
+			<!-- <li class="i"> -->
+				<!-- <img src="pages/1-thumb.jpg" width="76" height="100" class="page-1"> -->
+				<!-- <span>1</span> -->
+			<!-- </li> -->
+			<!-- <li class="d"> -->
+				<!-- <img src="pages/2-thumb.jpg" width="76" height="100" class="page-2"> -->
+				<!-- <img src="pages/3-thumb.jpg" width="76" height="100" class="page-3"> -->
+				<!-- <span>2-3</span> -->
+			<!-- </li> -->
+			<!-- <li class="d"> -->
+				<!-- <img src="pages/4-thumb.jpg" width="76" height="100" class="page-4"> -->
+				<!-- <img src="pages/5-thumb.jpg" width="76" height="100" class="page-5"> -->
+				<!-- <span>4-5</span> -->
+			<!-- </li> -->
+			<!-- <li class="d"> -->
+				<!-- <img src="pages/6-thumb.jpg" width="76" height="100" class="page-6"> -->
+				<!-- <img src="pages/7-thumb.jpg" width="76" height="100" class="page-7"> -->
+				<!-- <span>6-7</span> -->
+			<!-- </li> -->
+			<!-- <li class="d"> -->
+				<!-- <img src="pages/8-thumb.jpg" width="76" height="100" class="page-8"> -->
+				<!-- <img src="pages/9-thumb.jpg" width="76" height="100" class="page-9"> -->
+				<!-- <span>8-9</span> -->
+			<!-- </li> -->
+			<!-- <li class="d"> -->
+				<!-- <img src="pages/10-thumb.jpg" width="76" height="100" class="page-10"> -->
+				<!-- <img src="pages/11-thumb.jpg" width="76" height="100" class="page-11"> -->
+				<!-- <span>10-11</span> -->
+			<!-- </li> -->
+			<!-- <li class="i"> -->
+				<!-- <img src="pages/12-thumb.jpg" width="76" height="100" class="page-12"> -->
+				<!-- <span>12</span> -->
+			<!-- </li> -->
+		<!-- <ul> -->
+	<!-- <div>	 -->
+<!-- </div> -->
+<!-- </div> -->
 
 <script type="text/javascript">
 
@@ -138,6 +180,84 @@ function loadApp() {
 			}
 
 	});
+
+	// Zoom.js
+
+	$('.manga-viewport').zoom({
+		flipbook: $('.manga'),
+
+		max: function() { 
+			
+			return largemangaWidth()/$('.manga').width();
+
+		}, 
+
+		when: {
+
+			swipeLeft: function() {
+
+				$(this).zoom('flipbook').turn('next');
+
+			},
+
+			swipeRight: function() {
+				
+				$(this).zoom('flipbook').turn('previous');
+
+			},
+
+			resize: function(event, scale, page, pageElement) {
+
+				if (scale==1)
+					loadSmallPage(page, pageElement);
+				else
+					loadLargePage(page, pageElement);
+
+			},
+
+			zoomIn: function () {
+
+				$('.thumbnails').hide();
+				$('.made').hide();
+				$('.manga').removeClass('animated').addClass('zoom-in');
+				$('.zoom-icon').removeClass('zoom-icon-in').addClass('zoom-icon-out');
+				
+				if (!window.escTip && !$.isTouch) {
+					escTip = true;
+
+					$('<div />', {'class': 'exit-message'}).
+						html('<div>Press ESC to exit</div>').
+							appendTo($('body')).
+							delay(2000).
+							animate({opacity:0}, 500, function() {
+								$(this).remove();
+							});
+				}
+			},
+
+			zoomOut: function () {
+
+				$('.exit-message').hide();
+				$('.thumbnails').fadeIn();
+				$('.made').fadeIn();
+				$('.zoom-icon').removeClass('zoom-icon-out').addClass('zoom-icon-in');
+
+				setTimeout(function(){
+					$('.manga').addClass('animated').removeClass('zoom-in');
+					resizeViewport();
+				}, 0);
+
+			}
+		}
+	});
+
+	// Zoom event
+
+	if ($.isTouch)
+		$('.manga-viewport').bind('zoom.doubleTap', zoomTo);
+	else
+		$('.manga-viewport').bind('zoom.tap', zoomTo);
+
 
 	// Using arrow keys to turn the page
 
@@ -249,6 +369,36 @@ function loadApp() {
 	$('.manga').addClass('animated');
 
 }
+
+// Zoom icon
+
+ $('.zoom-icon').bind('mouseover', function() { 
+ 	
+ 	if ($(this).hasClass('zoom-icon-in'))
+ 		$(this).addClass('zoom-icon-in-hover');
+
+ 	if ($(this).hasClass('zoom-icon-out'))
+ 		$(this).addClass('zoom-icon-out-hover');
+ 
+ }).bind('mouseout', function() { 
+ 	
+ 	 if ($(this).hasClass('zoom-icon-in'))
+ 		$(this).removeClass('zoom-icon-in-hover');
+ 	
+ 	if ($(this).hasClass('zoom-icon-out'))
+ 		$(this).removeClass('zoom-icon-out-hover');
+
+ }).bind('click', function() {
+
+ 	if ($(this).hasClass('zoom-icon-in'))
+ 		$('.manga-viewport').zoom('zoomIn');
+ 	else if ($(this).hasClass('zoom-icon-out'))	
+		$('.manga-viewport').zoom('zoomOut');
+
+ });
+
+ $('#canvas').hide();
+
 
 // Load the HTML4 version if there's not CSS transform
 

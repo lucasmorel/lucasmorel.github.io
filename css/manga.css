@@ -66,12 +66,12 @@ body{
 	filter: alpha(opacity=20);
 }
 .manga .hard1 {
-	background-image:url(../pics/ahah.png)
+	background-image:url(../pics/couv.jpg)
 	
 }
 
 .manga .hard2 {
-	
+	background-image:url(../pics/couv.jpg)
 }
 .manga .page{
 	-webkit-box-shadow:0 0 20px rgba(0,0,0,0.2);
